@@ -1,26 +1,39 @@
 'use client';
 
+import { useState } from 'react';
 import TaskList from './TaskList';
 
 export default function TaskBoard() {
-  const tasks = [
-    { id: 1, title: 'Buy milk', done: false },
-    { id: 2, title: 'Write tests', done: true },
-    { id: 3, title: 'Ship it', done: false },
-  ];
+  const [tasks, setTasks] = useState([
+    { id: 't1', title: 'Buy milk', done: false },
+    { id: 't2', title: 'Write tests', done: false },
+  ]);
 
   function handleToggle(id) {
-    console.log('toggle', id);
+    setTasks(
+      tasks.map((t) =>
+        t.id === id ? { ...t, done: !t.done } : t
+      )
+    );
   }
 
   function handleDelete(id) {
-    console.log('delete', id);
+    setTasks(tasks.filter((t) => t.id !== id));
   }
 
+  const completedCount = tasks.filter((t) => t.done).length;
+
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Task Manager</h1>
-      <TaskList tasks={tasks} onToggle={handleToggle} onDelete={handleDelete} />
-    </main>
+    <div className="max-w-lg mx-auto p-6">
+      <p className="text-sm text-gray-500 mb-4">
+        {completedCount} of {tasks.length} complete
+      </p>
+
+      <TaskList
+        tasks={tasks}
+        onToggle={handleToggle}
+        onDelete={handleDelete}
+      />
+    </div>
   );
 }
