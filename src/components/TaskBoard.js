@@ -1,16 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AddTaskForm from './AddTaskForm';
 import TaskList from './TaskList';
 
 export default function TaskBoard() {
-  const [tasks, setTasks] = useState([
-    { id: 't1', title: 'Buy milk', done: false },
-    { id: 't2', title: 'Write tests', done: false },
-  ]);
-
+  const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('tasks');
+    if (saved) {
+      setTasks(JSON.parse(saved));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    const active = tasks.filter((t) => !t.done).length;
+    document.title = `${active} tasks remaining`;
+
+    return () => {
+      document.title = 'Task Manager';
+    };
+  }, [tasks]);
 
   function handleAdd(title) {
     const newTask = {
